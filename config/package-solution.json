@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "bpcl-mr-department-client-side-solution",
+    "id": "a15dca92-cdc8-49b6-bf25-21eaf7453873",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.21.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "BPCL-MR-DEPARTMENT description"
+      },
+      "longDescription": {
+        "default": "BPCL-MR-DEPARTMENT description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "bpcl-mr-department Feature",
+        "description": "The feature that activates elements of the bpcl-mr-department solution.",
+        "id": "d050c544-884e-44c8-83ce-5cdb972dc416",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/bpcl-mr-department.sppkg"
+  }
+}
