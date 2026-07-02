@@ -399,12 +399,12 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
       </div>
 
       {/* Mission & Vision , useful links */}
-      <Container fluid>
+      <Container fluid className="p-4">
         <Row className="g-4 align-items-stretch h-100">
           {/* Left: Mission & Vision */}
           <Col xs={12} lg={8} className="d-flex">
             <div className={`${styles.mvSection} w-100`}>
-              <Row>
+              <Row className="mb-3">
                 <Col xs={12} className={styles.titleWrap}>
                   <h2 className={styles.sectionTitle}>Mission & Vision</h2>
                 </Col>
@@ -546,7 +546,7 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
         </Row>
       </Container>
       {/* Calendar, events & Calendar */}
-      <Container fluid className="mt-4">
+      <Container fluid className="p-4">
         <Row className="align-items-stretch h-100">
           <Col xs={12} lg={4} className="d-flex">
             <div className="w-100 d-flex flex-column h-100">
@@ -641,12 +641,12 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
                             </Col>
 
                             <Col>
-                              <h2 className={styles.eventTitle}>
+                              <h2 className={styles.eventTitle} title={event.Title}>
                                 {event.Title}
                               </h2>
 
                               <div className={styles.eventTime}>
-                                <i className="bi bi-clock"></i>
+                                <i className="bi bi-clock" />
 
                                 <span>
                                   {start.toLocaleTimeString([], {
@@ -753,7 +753,7 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
       </Container>
 
       {/* <!-- ==========News slider  ========== --> */}
-      <Container fluid className="mt-4 py-2">
+      <Container fluid className="p-4">
         <Row>
           {announcements.length > 0 && (
             <Col xs={12} lg={discussions.length > 0 ? 8 : 12}>
@@ -787,7 +787,7 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
                     type="button"
                     className={`news-prev ${styles.swiperNav} ${styles.swiperPrev}`}
                   >
-                    <i className="bi bi-chevron-left"></i>
+                    <i className="bi bi-chevron-left" />
                   </button>
 
                   {/* SWIPER */}
@@ -833,7 +833,7 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
                               </h6>
 
                               <div className={styles.cardDate}>
-                                <i className="bi bi-calendar3"></i>
+                                <i className="bi bi-calendar3" />
                                 <span>
                                   {item.PublishedDate
                                     ? new Date(
@@ -854,7 +854,7 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
                     type="button"
                     className={`news-next ${styles.swiperNav} ${styles.swiperNext}`}
                   >
-                    <i className="bi bi-chevron-right"></i>
+                    <i className="bi bi-chevron-right" />
                   </button>
                 </div>
               </div>
@@ -929,7 +929,7 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
       {/* Organogram Modal  */}
       <Modal show={show} onHide={handleClose} centered size="xl">
         <Modal.Header closeButton>
-          <Modal.Title className={styles.modalTitle}>Modal Title</Modal.Title>
+          <Modal.Title className={styles.modalTitle}>Organogram</Modal.Title>
         </Modal.Header>
 
         <Modal.Body className={`p-3 ${styles.modalBody}`}>

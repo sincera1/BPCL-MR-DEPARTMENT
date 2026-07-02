@@ -676,7 +676,7 @@ abbr[title] {
 .title {
   margin: 0 0 0.5rem;
   font-size: clamp(0.75rem, 1vw + 0.5rem, 0.8125rem);
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.4;
   color: #333638;
 
@@ -1012,6 +1012,13 @@ abbr[title] {
   font-size: 12px;
   line-height: 18px;
   color: #1a1a1a;
+   display: -webkit-box;
+
+  -webkit-line-clamp: 2;
+  line-clamp: 2; /* standard property (for future compatibility) */
+
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .eventTime {
@@ -1112,7 +1119,7 @@ abbr[title] {
 
 .documentTitle {
   font-weight: 400;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 16px;
   letter-spacing: 2%;
   color: #1a1a1a;
@@ -1458,8 +1465,8 @@ abbr[title] {
   margin: 0 0 6px;
 
   color: #1f2937;
-  font-size: 0.86rem;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 500;
   line-height: 1.4;
 
   display: -webkit-box;
@@ -1633,8 +1640,9 @@ abbr[title] {
   margin-bottom: 8px;
 }
 .modalBody {
-  overflow-y: scroll;
-  max-height: calc(100vh - 180px);
+  // overflow-y: scroll;
+  // max-height: calc(100vh - 180px);
+  align-items: center;
 }
 
 .eventCardBody {
