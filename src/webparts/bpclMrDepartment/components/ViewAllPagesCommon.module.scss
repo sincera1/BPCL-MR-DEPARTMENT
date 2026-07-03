@@ -415,25 +415,43 @@ Form.Control {
    Title
 ========================== */
 
+// .cardTitle {
+//   margin: 0 0 6px;
+
+//   color: #1f2937;
+
+//   font-size: 0.86rem;
+//   font-weight: 700;
+//   line-height: 1.4;
+
+//   display: -webkit-box;
+//   -webkit-box-orient: vertical;
+//  -webkit-line-clamp: 2;
+
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+
+//   min-height: 40px;
+
+//   transition: color 0.3s ease;
+// }
+
 .cardTitle {
   margin: 0 0 6px;
-
   color: #1f2937;
-
   font-size: 0.86rem;
   font-weight: 700;
   line-height: 1.4;
 
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
- // -webkit-line-clamp: 2;
-
   overflow: hidden;
   text-overflow: ellipsis;
 
-  min-height: 40px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 
-  transition: color 0.3s ease;
+  /* Standard property */
+  line-clamp: 2;
 }
 
 /* ==========================

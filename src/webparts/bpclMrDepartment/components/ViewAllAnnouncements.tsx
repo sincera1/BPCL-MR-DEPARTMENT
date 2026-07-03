@@ -7,6 +7,9 @@ import "@fontsource/inter/700.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
+import news1 from "../assets/news1.png";
+
+
 import { Row, Col, Form, Button, Pagination } from "react-bootstrap";
 
 import { spfi, SPFI } from "@pnp/sp";
@@ -28,9 +31,16 @@ const ViewAllAnnouncements: React.FC<IViewAllAnnouncementsProps> = (props) => {
     return spfi().using(SPFx(props.context));
   }, [props.context]);
 
-  const service = React.useMemo(() => {
-    return new BpclDepartmentService(sp);
-  }, [sp]);
+  // const service = React.useMemo(() => {
+  //   return new BpclDepartmentService(sp);
+  // }, [sp]);
+
+   const service = React.useMemo(() => {
+      return new BpclDepartmentService(
+          sp,
+          props.context
+      );
+  }, [sp, props.context]);
 
   const [announcements, setAnnouncements] = React.useState<IAnnouncement[]>([]);
 
@@ -178,7 +188,7 @@ const ViewAllAnnouncements: React.FC<IViewAllAnnouncementsProps> = (props) => {
                 >
                   <div className={styles.cardImageWrapper}>
                     <img
-                      src={card.ImageUrl || ""}
+                      src={card.ImageUrl || news1}
                       alt={card.Title}
                       className={styles.cardImage}
                     />

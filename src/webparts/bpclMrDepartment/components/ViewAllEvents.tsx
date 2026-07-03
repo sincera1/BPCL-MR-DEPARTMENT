@@ -6,6 +6,7 @@ import '@fontsource/inter/600.css';
 import '@fontsource/inter/700.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+
  
 import {
   Row,
@@ -39,9 +40,16 @@ const ViewAllEvents: React.FC<IViewAllEventsProps> = (props) => {
   return spfi().using(SPFx(props.context));
 }, [props.context]);
 
-const service = React.useMemo(() => {
-  return new BpclDepartmentService(sp);
-}, [sp]);
+// const service = React.useMemo(() => {
+//   return new BpclDepartmentService(sp);
+// }, [sp]);
+
+ const service = React.useMemo(() => {
+    return new BpclDepartmentService(
+        sp,
+        props.context
+    );
+}, [sp, props.context]);
 
 const [events, setEvents] = React.useState<IEvent[]>([]);
 

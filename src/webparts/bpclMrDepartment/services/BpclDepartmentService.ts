@@ -5,6 +5,11 @@ import "@pnp/sp/items";
 import "@pnp/sp/files";
 import "@pnp/sp/folders";
 
+import { graphfi } from "@pnp/graph";
+import { SPFx } from "@pnp/graph";
+import "@pnp/graph/taxonomy";
+import { WebPartContext } from "@microsoft/sp-webpart-base";
+
 /* ============================
    Navigation Menu Interface
 ============================ */
@@ -171,10 +176,19 @@ export interface IDiscussionBoard {
 export default class BpclDepartmentService {
 
 
+// constructor(
+//     private sp: SPFI,
+  
+// ) {}
+
+private context: WebPartContext;
+
 constructor(
     private sp: SPFI,
-   // private context: WebPartContext
-) {}
+    context: WebPartContext
+) {
+    this.context = context;
+}
 
   /* ============================
      Navigation Menu
@@ -215,85 +229,139 @@ constructor(
    Term Store Navigation
 ============================ */
 
-// public async getTermNavigation(
-//   termSetId: string
-// ): Promise<ITermNavigation[]> {
+public async getTermNavigation(
+    termGroupName: string,
+    termSetName: string
+): Promise<INavigationMenu[]> {
 
-//   try {
+    try {
 
-//     const webUrl =
-//       (this.sp as any)._root?._options?.baseUrl ||
-//       window.location.origin;
+        const graph = graphfi().using(SPFx(this.context));
 
+        // Get all groups
+        const groups = await graph.termStore.groups();
 
+       const group = groups.find((g: any) =>
+    g.displayName === termGroupName ||
+    g.name === termGroupName
+);
 
-//     // Get parent terms
-//     const parentResponse = await fetch(
-//       `${webUrl}/_api/v2.1/termStore/sets('${termSetId}')/terms`,
-//       {
-//         headers: {
-//           Accept: "application/json"
-//         }
-//       }
-//     );
+if (!group || !group.id) {
+    console.log("Group not found");
+    return [];
+}
 
-//     const parentData = await parentResponse.json();
+const groupId = group.id as string;
 
-//     console.log("Parent Terms:", parentData);
+const sets = await graph.termStore
+    .groups
+    .getById(groupId)
+    .sets();
 
-//     if (!parentData.value) {
-//       console.error("No parent terms found", parentData);
-//       return [];
-//     }
+        const set = sets.find((s: any) =>
+            s.localizedNames?.[0]?.name === termSetName ||
+            s.name === termSetName
+        );
 
-//     const menus: ITermNavigation[] = [];
+        if (!set) {
+            console.log("Term Set not found");
+            return [];
+        }
 
-//     for (const term of parentData.value) {
+       
 
-//       // Get child terms
-//       const childResponse = await fetch(
-//         `${webUrl}/_api/v2.1/termStore/terms('${term.id}')/children`,
-//         {
-//           headers: {
-//             Accept: "application/json"
-//           }
-//         }
-//       ); 
+        if (!set || !set.id) {
+    console.log("Term Set not found");
+    return [];
+}
 
-//       const childData = await childResponse.json();
+const setId = set.id as string;
 
-//       menus.push({
+const tree = await graph.termStore
+    .groups
+    .getById(groupId)
+    .sets
+    .getById(setId)
+    .getAllChildrenAsTree();
 
-//         Id: term.id,
+        const menus: INavigationMenu[] = [];
 
-//         Title: term.labels?.length
-//           ? term.labels[0].name
-//           : "",
+        const build = (
+            items: any[],
+            parentId?: any
+        ) => {
 
-//         Children: childData.value
-//           ? childData.value.map((child: any) => ({
-//               Id: child.id,
-//               Title: child.labels?.length
-//                 ? child.labels[0].name
-//                 : ""
-//             }))
-//           : []
+            items.forEach((term: any) => {
 
-//       });
+                let redirect = "";
 
-//     }
+                if (term.properties) {
 
-//     return menus;
+                    const prop = term.properties.find(
+                        (p: any) =>
+                            p.key === "redirectUrl" ||
+                            p.key === "RedirectUrl"
+                    );
 
-//   } catch (error) {
+                    if (prop) {
+                        redirect = prop.value;
+                    }
+                }
 
-//     console.error("Error fetching Term Store", error);
+                menus.push({
 
-//     return [];
+                    Id: term.id,
 
-//   }
+                    Title:
+                        term.labels?.find((x: any) => x.isDefault)?.name ||
+                        term.labels?.[0]?.name ||
+                        "",
 
-// }
+                    ParentIDId: parentId,
+
+                    RedirectURL: {
+                        Url: redirect,
+                        Description: ""
+                    },
+
+                    Sequence: 0,
+
+                    IsActive: true
+
+                });
+
+                if (
+                    term.children &&
+                    term.children.length > 0
+                ) {
+
+                    build(
+                        term.children,
+                        term.id
+                    );
+
+                }
+
+            });
+
+        };
+
+        build(tree);
+
+        console.log("Term Navigation", menus);
+
+        return menus;
+
+    }
+    catch (e) {
+
+        console.log(e);
+
+        return [];
+
+    }
+ 
+}
   /* ============================
      Welcome Banner
   ============================ */

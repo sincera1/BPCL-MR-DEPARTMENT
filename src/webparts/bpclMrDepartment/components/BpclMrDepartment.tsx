@@ -36,7 +36,7 @@ import { Navigation } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/navigation";
-//import vision from "../assets/vision.png";
+import news1 from "../assets/news1.png";
 //import mission from "../assets/mission.png";
 // import Slider from "react-slick";
 // import { useState } from "react";
@@ -63,9 +63,16 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
     return spfi().using(SPFx(props.context));
   }, [props.context]);
 
+  // const service = React.useMemo(() => {
+  //   return new BpclDepartmentService(sp);
+  // }, [sp]);
+
   const service = React.useMemo(() => {
-    return new BpclDepartmentService(sp);
-  }, [sp]);
+    return new BpclDepartmentService(
+        sp,
+        props.context
+    );
+}, [sp, props.context]);
 
   const [navigationMenu, setNavigationMenu] = React.useState<INavigationMenu[]>(
     [],
@@ -88,6 +95,18 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
     "Home" | "FavouriteLinks" | "Events" | "Documents" | "Announcements"
   >("Home");
 
+const siteTitle = props.context.pageContext.web.title;
+
+  React.useEffect(() => {
+
+  const siteHeader = document.getElementById("spSiteHeader");
+
+  if (siteHeader) {
+    siteHeader.style.display = "none";
+  }
+
+}, []);
+
   React.useEffect(() => {
     loadNavigationMenu();
     loadWelcomeBanners();
@@ -102,6 +121,11 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
   const loadNavigationMenu = async (): Promise<void> => {
     try {
       const data = await service.getNavigationMenu();
+
+//       const data = await service.getTermNavigation(
+//     "BPCL-CPH",
+//     "Award"
+// ); 
 
       setNavigationMenu(data);
 
@@ -297,7 +321,7 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
       <Navbar expand="lg" className={styles.navbarCustom}>
         <Container fluid>
           <Navbar.Brand className={styles.brandText}>
-            MR Department
+            {siteTitle}
           </Navbar.Brand>
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -817,8 +841,7 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
                           <div className={styles.cardImageWrapper}>
                             <img
                               src={
-                                item.ImageUrl ||
-                                "/_layouts/15/images/placeholder32x32.png"
+                                item.ImageUrl || news1
                               }
                               alt={item.Title}
                               className={styles.cardImage}
