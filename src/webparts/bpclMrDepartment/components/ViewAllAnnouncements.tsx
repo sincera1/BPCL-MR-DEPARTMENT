@@ -1,5 +1,7 @@
 import * as React from "react";
 import styles from "./ViewAllPagesCommon.module.scss";
+import { useState } from "react";
+
 //import '@fontsource/inter';
 import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
@@ -8,6 +10,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 import news1 from "../assets/news1.png";
+
+import PopupModal from "../services/PopupModel";
+
 
 
 import { Row, Col, Form, Button, Pagination } from "react-bootstrap";
@@ -56,6 +61,12 @@ const ViewAllAnnouncements: React.FC<IViewAllAnnouncementsProps> = (props) => {
 
   const [pageSize, setPageSize] = React.useState(10);
 
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [popupMessage, setPopupMessage] = useState<string>("");
+  const [popupType, setPopupType] = useState<"success" | "danger" | "confirm">(
+    "success",
+  );
+
   const loadAnnouncements = async () => {
     const data = await service.getAllAnnouncements();
 
@@ -66,38 +77,73 @@ const ViewAllAnnouncements: React.FC<IViewAllAnnouncementsProps> = (props) => {
   React.useEffect(() => {
     loadAnnouncements();
   }, [service]);
+  
 
-  const handleSearch = () => {
-    let data = [...announcements];
+ const handleSearch = () => {
+  // Validation
+  // if (fromDate && !toDate) {
+  //   setPopupType("danger");
+  //   setPopupMessage("Please select the To Date.");
+  //   setShowPopup(true);
+  //   return;
+  // }
 
-    if (fromDate) {
-      const from = new Date(fromDate);
-      from.setHours(0, 0, 0, 0);
+  if (!fromDate && toDate) {
+    setPopupType("danger");
+    setPopupMessage("Please select the From Date.");
+    setShowPopup(true);
+    return;
+  }
 
-      data = data.filter((item) => {
-        const date = new Date(item.PublishedDate || "");
+  if (fromDate && toDate && new Date(fromDate) > new Date(toDate)) {
+    setPopupType("danger");
+    setPopupMessage("From Date cannot be greater than To Date.");
+    setShowPopup(true);
+    return;
+  }
 
-        date.setHours(0, 0, 0, 0);
+  let data = [...announcements];
 
-        return date >= from;
-      });
-    }
+  if (fromDate) {
+    const from = new Date(fromDate);
+    from.setHours(0, 0, 0, 0);
 
-    if (toDate) {
-      const to = new Date(toDate);
-      to.setHours(23, 59, 59, 999);
+    data = data.filter((item) => {
+      const date = new Date(item.PublishedDate || "");
+      date.setHours(0, 0, 0, 0);
 
-      data = data.filter((item) => {
-        const date = new Date(item.PublishedDate || "");
+      return date >= from;
+    });
+  }
 
-        return date <= to;
-      });
-    }
+  if (toDate) {
+    const to = new Date(toDate);
+    to.setHours(23, 59, 59, 999);
 
+    data = data.filter((item) => {
+      const date = new Date(item.PublishedDate || "");
+
+      return date <= to;
+    });
+  }
+
+  setFilteredAnnouncements(data);
+  setCurrentPage(1);
+};
+
+  const handleReset = () => {
+
+        let data = [...announcements];
+
+    setFromDate("");
+    setToDate("");
+
+    // Restore all events
     setFilteredAnnouncements(data);
 
     setCurrentPage(1);
-  };
+
+};
 
   const totalPages = Math.ceil(filteredAnnouncements.length / pageSize);
 
@@ -152,15 +198,30 @@ const ViewAllAnnouncements: React.FC<IViewAllAnnouncementsProps> = (props) => {
             </div>
           </Col>
 
-          <Col xl={2} lg={4} md={12} sm={12}>
-            <Button
-              className={`w-100 mt-sm-3 ${styles.searchBtn}`}
-              onClick={handleSearch}
-            >
-              {" "}
-              <i className="bi bi-search me-2"></i>
-              Search
-            </Button>
+                <Col xl={4} lg={4} md={12} sm={12}>
+          
+            <div className="d-flex gap-2 mt-sm-3">
+          
+              <Button
+                className={`flex-fill ${styles.searchBtn}`}
+                onClick={handleSearch}
+              >
+                <i className="bi bi-search me-2"></i>
+                Search
+              </Button>
+          
+             <Button
+                variant="outline-secondary"
+                className={`flex-fill ${styles.resetBtn}`}
+                onClick={handleReset}
+              >
+                <i className="bi bi-arrow-counterclockwise me-2" />
+                Reset
+              </Button>
+              
+          
+            </div>
+          
           </Col>
         </Row>
         {/* </Card.Body></Card> */}
@@ -180,11 +241,26 @@ const ViewAllAnnouncements: React.FC<IViewAllAnnouncementsProps> = (props) => {
                 className="mb-4 d-flex"
                 key={card.Id}
               >
-                <a
+                {/* <a 
                   href={card.FileUrl || "#"}
-                  target="_blank"
+                   onClick={(e) => {
+    e.preventDefault();
+    window.open(card.FileUrl, "_blank", "noopener,noreferrer");
+  }}
                   rel="noopener noreferrer"
                   className={styles.newsCard}
+                > */}
+ <a
+                  href="#"
+                  className={styles.newsCard}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+ 
+                    if (card.FileUrl) {
+                      window.open(card.FileUrl, "_blank", "noopener,noreferrer");
+                    } 
+                  }}
                 >
                   <div className={styles.cardImageWrapper}>
                     <img
@@ -271,6 +347,16 @@ const ViewAllAnnouncements: React.FC<IViewAllAnnouncementsProps> = (props) => {
           </Pagination>
         </div>
       </div>
+       <PopupModal
+              show={showPopup}
+              type={popupType}
+              message={popupMessage}
+              onClose={() => {
+                setShowPopup(false);
+      
+                
+              }}
+            />
     </div>
   );
 };

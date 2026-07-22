@@ -175,13 +175,33 @@ export default class CombinedCalendar extends React.Component<
   }
 
   // ---------------- EVENTS ----------------
+  // private getEvents = (date: Date): IEventItem[] => {
+  //   return this.state.events.filter(
+  //     (e) =>
+  //       moment(e.date).format("YYYY-MM-DD") ===
+  //       moment(date).format("YYYY-MM-DD"),
+  //   );
+  // };
+
   private getEvents = (date: Date): IEventItem[] => {
-    return this.state.events.filter(
-      (e) =>
-        moment(e.date).format("YYYY-MM-DD") ===
-        moment(date).format("YYYY-MM-DD"),
-    );
-  };
+
+  return this.state.events.filter((e) => {
+
+    if (!e.start) return false;
+
+    const start = moment(e.start).startOf("day");
+
+    const end = e.end
+      ? moment(e.end).startOf("day")
+      : start;
+
+    const current = moment(date).startOf("day");
+    
+    return current.isBetween(start, end, undefined, "[]");
+
+  });
+
+};
 
   // ---------------- TILE ----------------
   private renderTileContent = ({ date, view }: any): React.ReactNode => {
@@ -292,7 +312,7 @@ export default class CombinedCalendar extends React.Component<
               position: "relative",
               border: "1px solid #f1f3f6",
               borderRadius: "10px",
-              padding: "10px",
+              padding: "30px",
               background: "#fff",
             }}
           >

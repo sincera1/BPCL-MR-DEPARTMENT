@@ -148,25 +148,25 @@ export interface IDiscussionBoard {
 
     Title: string;
 
-    Description: string;
+    Message: string;
 
-    LatestReply: string;
+    ParentId?: number;
 
-    LatestReplyBy: {
-        Title: string;
-    };
+    IsReply: boolean;
 
-    ReplyDate: string;
+    ReplyCount: number;
 
-    RedirectURL: {
-        Url: string;
-        Description: string;
-    };
-
-    DisplayOrder: number;
+     DisplayOrder: number;
 
     IsActive: boolean;
 
+    Author?: {
+  Id: number;
+  Title: string;
+  EMail: string;
+};
+
+Created: string;
 }
 
 /* ============================
@@ -922,17 +922,20 @@ public async getDiscussionBoard(): Promise<IDiscussionBoard[]> {
             .select(
                 "Id",
                 "Title",
-                "Description",
-                "LatestReply",
-                "LatestReplyBy/Title",
-                "ReplyDate",
-                "RedirectURL",
+                "Message",
+                "Created",
+                "ReplyCount",
                 "DisplayOrder",
-                "IsActive"
-            )
-            .expand("LatestReplyBy")
-            .filter("IsActive eq 1")
-            .orderBy("DisplayOrder", true)();
+                "IsActive",
+                 "Author/Id",
+    "Author/Title",
+    "Author/EMail"
+              
+        )
+        .expand("Author")
+        .filter("IsActive eq 1 and IsReply eq 0") 
+        .orderBy("Created", false)();
+        //.orderBy("DisplayOrder", true)();
 
         return items as IDiscussionBoard[];
 
@@ -947,4 +950,119 @@ public async getDiscussionBoard(): Promise<IDiscussionBoard[]> {
     }
 
 }
+public async getReplies(
+    parentId:number
+):Promise<IDiscussionBoard[]>{
+
+return await this.sp.web.lists
+.getByTitle("MR_SL_DiscussionBoard")
+.items
+.select(
+"Created",
+"Id",
+                "Title",
+                "Message",
+                "IsActive",
+                "Author/Id",     
+"Author/Title",
+"Author/EMail"
+)
+.expand("Author")
+.filter(
+`ParentId eq ${parentId} and IsReply eq 1`
+)
+.orderBy("Created",true)();
+
+}
+
+public async addReply(
+    parentId: number,
+    message: string
+): Promise<void> {
+
+    // Get current user
+//const currentUserId = this.context.pageContext.legacyPageContext.userId;
+    // Get current reply count
+    const parent = await this.sp.web.lists
+        .getByTitle("MR_SL_DiscussionBoard") 
+        .items
+        .getById(parentId)
+        .select("ReplyCount")();
+
+    const replyCount = parent.ReplyCount || 0;
+
+    // Add reply
+    await this.sp.web.lists
+        .getByTitle("MR_SL_DiscussionBoard")
+        .items
+        .add({
+
+            Title: "",
+
+            Message: message,
+
+            ParentId: parentId,
+
+            IsReply: true,
+
+            IsActive: true
+
+        });
+
+    // Update parent discussion
+  await this.sp.web.lists
+    .getByTitle("MR_SL_DiscussionBoard")
+    .items
+    .getById(parentId)
+    .update({
+        ReplyCount: replyCount + 1
+    });
+
+}
+
+public async addDiscussion(
+    title: string,
+    message: string,
+    isQuestion: boolean
+): Promise<void> {
+
+    await this.sp.web.lists
+        .getByTitle("MR_SL_DiscussionBoard")
+        .items
+        .add({
+
+            Title: title,
+
+            Message: message,
+
+            IsQuestion: isQuestion,
+
+            IsReply: false,
+
+            IsActive: true,
+
+            ReplyCount: 0,
+
+
+        });
+
+}
+
+public async updateReply(
+    replyId: number,
+    message: string
+): Promise<void> {
+
+    await this.sp.web.lists
+        .getByTitle("MR_SL_DiscussionBoard")
+        .items
+        .getById(replyId)
+        .update({
+
+            Message: message
+
+        });
+
+}
+
 }
