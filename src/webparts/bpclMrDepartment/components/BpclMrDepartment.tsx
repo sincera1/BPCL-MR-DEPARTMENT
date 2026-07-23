@@ -76,6 +76,9 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
   // const [navigationMenu, setNavigationMenu] = React.useState<INavigationMenu[]>(
   //   [],
   // );
+
+  const [showAllMenus, setShowAllMenus] = React.useState(true);
+
   const [welcomeBanners, setWelcomeBanners] = React.useState<IWelcomeBanner[]>(
     [],
   );
@@ -619,7 +622,20 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
         </Container>
       </Navbar> */}
 
-      <Navbar expand="lg" className={`${styles.navbarCustom}`}>
+      
+      {/* <div
+  className={`${styles.navigationWrapper} ${
+    showAllMenus ? styles.expanded : ""
+  }`}
+> */}
+  <div
+        className={`${styles.menuRows} ${
+            showAllMenus ? styles.expanded : ""
+        }`}
+    >
+  {/* <Nav className={styles.navWrapper}> */}
+    {/* Existing menu rendering */}
+    <Navbar expand="lg" className={`${styles.navbarCustom}`}>
         <Container fluid>
           <Navbar.Brand className={styles.brandText}>{siteTitle}</Navbar.Brand>
 
@@ -695,6 +711,24 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+
+  {/* </Nav> */}
+
+  {menus.filter(m => !m.ParentIDId).length > 8 && (
+    <button
+      className={styles.expandButton}
+      onClick={() => setShowAllMenus(!showAllMenus)}
+    >
+      <i
+        className={`bi ${
+          showAllMenus ? "bi-chevron-up" : "bi-chevron-down"
+        }`}
+      ></i>
+    </button>
+  )}
+</div>
+
+
 
       {/* HERO SLIDER */}
       <div

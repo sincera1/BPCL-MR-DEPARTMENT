@@ -546,6 +546,98 @@
   right: 0 !important;
 }
 
+// .navigationWrapper {
+//     position: relative;
+//     overflow: hidden;
+//     transition: all .3s ease;
+// }
+
+// .navWrapper {
+//     display: flex;
+//     flex-wrap: wrap;
+//     gap: 8px;
+//     max-height: 52px; // One row
+//     overflow: hidden;
+//     transition: max-height .3s ease;
+// }
+.navigationWrapper{
+    position: relative;
+}
+
+.navWrapper{
+    display:flex;
+    flex-wrap:wrap;
+}
+
+.expanded .navWrapper {
+    max-height: 300px; // Expand to show multiple rows
+}
+
+.menuRows{
+    position:relative;
+}
+
+.navbarCustom{
+
+    max-height:58px;
+
+    overflow:hidden;
+
+    transition:max-height .3s ease;
+}
+
+.expanded .navbarCustom{
+
+    max-height:220px;
+
+    overflow:visible;
+}
+.navbarCustom{
+    overflow:visible !important;
+}
+
+.navWrapper{
+    overflow:visible !important;
+}
+
+.navWrapper .dropdown-menu{
+    z-index:9999;
+}
+
+.expandButton{
+
+    position:absolute;
+
+    top:14px;
+
+    right:12px;
+
+    width:34px;
+
+    height:34px;
+
+    border:none;
+
+    background:transparent;
+
+    color:#fff;
+
+    font-size:22px;
+
+    z-index:10000;
+}
+
+// .expandButton {
+//     position: absolute;
+//     right: 0;
+//     top: 10px;
+//     border: none;
+//     background: transparent;
+//     color: white;
+//     font-size: 20px;
+//     cursor: pointer;
+// }
+
 /* HERO CONTENT */
 
 .heroContent {
