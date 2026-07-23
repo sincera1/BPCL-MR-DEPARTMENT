@@ -1,5 +1,6 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 import styles from "./BpclMrDepartment.module.scss";
 import type { IBpclMrDepartmentProps } from "./IBpclMrDepartmentProps";
 
@@ -68,7 +69,7 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
   // const service = React.useMemo(() => {
   //   return new BpclDepartmentService(sp);
   // }, [sp]);
-
+  const [showMore, setShowMore] = useState(false);
   const service = React.useMemo(() => {
     return new BpclDepartmentService(sp, props.context);
   }, [sp, props.context]);
@@ -126,6 +127,67 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
   >("Home");
 
   const siteTitle = props.context.pageContext.web.title;
+
+  // const parents = menus.filter((menu) => !menu.ParentIDId);
+
+  // const MAX_VISIBLE = 7;
+
+  // const visibleMenus = parents.slice(0, MAX_VISIBLE);
+
+  // const hiddenMenus = parents.slice(MAX_VISIBLE);
+  const [hoverMenu, setHoverMenu] = useState<number | null>(null);
+  const parents = menus.filter((menu) => !menu.ParentIDId);
+
+  // const [maxVisible, setMaxVisible] = useState(5);
+
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     const width = window.innerWidth;
+
+  //     if (width <= 1100) {
+  //       setMaxVisible(4);
+  //     } else if (width <= 1400) {
+  //       setMaxVisible(6);
+  //     } else {
+  //       setMaxVisible(7);
+  //     }
+  //   };
+
+  //   handleResize();
+
+  //   window.addEventListener("resize", handleResize);
+
+  //   return () => {
+  //     window.removeEventListener("resize", handleResize);
+  //   };
+  // }, []);
+  const getMaxVisible = () => {
+    const width = window.innerWidth;
+
+    if (width <= 1100) {
+      return 4;
+    } else if (width <= 1400) {
+      return 6;
+    } else {
+      return 7;
+    }
+  };
+
+  const [maxVisible, setMaxVisible] = useState(getMaxVisible);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setMaxVisible(getMaxVisible());
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+  const visibleMenus = parents.slice(0, maxVisible);
+  const hiddenMenus = parents.slice(maxVisible);
 
   // code to show and hide the edit button
   let commandBarObserver: MutationObserver | undefined;
@@ -619,18 +681,19 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
         </Container>
       </Navbar> */}
 
-      <Navbar expand="lg" className={`${styles.navbarCustom}`}>
+      {/* NAVBAR */}
+      <Navbar expand="lg" className={styles.navbarCustom}>
         <Container fluid>
           <Navbar.Brand className={styles.brandText}>{siteTitle}</Navbar.Brand>
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className={`ms-auto ${styles.navWrapper}`}>
-              {(() => {
-                const parents = menus.filter((menu) => !menu.ParentIDId);
-
-                return parents.map((parent, index) => {
+            {/* BOTH MENU ROWS WRAPPER */}
+            <div className={styles.menuContainer}>
+              {/* FIRST ROW */}
+              <Nav className={styles.navWrapper}>
+                {visibleMenus.map((parent) => {
                   const children = menus.filter(
                     (x) => x.ParentIDId === parent.Id,
                   );
@@ -641,11 +704,10 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
                         key={parent.Id}
                         title={parent.Title}
                         id={`menu-${parent.Id}`}
-                        className={
-                          index === parents.length - 1
-                            ? styles.lastDropdown
-                            : ""
-                        }
+                        show={hoverMenu === parent.Id}
+                        onMouseEnter={() => setHoverMenu(parent.Id)}
+                        onMouseLeave={() => setHoverMenu(null)}
+                        className={styles.hoverDropdown}
                       >
                         {children.map((child) => (
                           <NavDropdown.Item
@@ -689,13 +751,81 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
                       {parent.Title}
                     </Nav.Link>
                   );
-                });
-              })()}
-            </Nav>
+                })}
+
+                {/* MORE BUTTON */}
+                {hiddenMenus.length > 0 && (
+                  <Nav.Link
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShowMore(!showMore);
+                    }}
+                  >
+                    {showMore ? "Less ▲" : "More ▼"}
+                  </Nav.Link>
+                )}
+              </Nav>
+
+              {/* SECOND ROW */}
+              {showMore && (
+                <Nav className={styles.navWrapper}>
+                  {hiddenMenus.map((parent) => {
+                    const children = menus.filter(
+                      (x) => x.ParentIDId === parent.Id,
+                    );
+
+                    if (children.length > 0) {
+                      return (
+                        <NavDropdown
+                          key={parent.Id}
+                          title={parent.Title}
+                          id={`more-menu-${parent.Id}`}
+                          show={hoverMenu === parent.Id}
+                          onMouseEnter={() => setHoverMenu(parent.Id)}
+                          onMouseLeave={() => setHoverMenu(null)}
+                          className={styles.hoverDropdown}
+                        >
+                          {children.map((child) => (
+                            <NavDropdown.Item
+                              key={child.Id}
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault();
+
+                                if (child.RedirectURL?.Url) {
+                                  window.open(
+                                    child.RedirectURL.Url,
+                                    "_blank",
+                                    "noopener,noreferrer",
+                                  );
+                                }
+                              }}
+                            >
+                              {child.Title}
+                            </NavDropdown.Item>
+                          ))}
+                        </NavDropdown>
+                      );
+                    }
+
+                    return (
+                      <Nav.Link
+                        key={parent.Id}
+                        href={parent.RedirectURL?.Url || undefined}
+                        target={parent.RedirectURL?.Url ? "_blank" : undefined}
+                        rel="noopener noreferrer"
+                      >
+                        {parent.Title}
+                      </Nav.Link>
+                    );
+                  })}
+                </Nav>
+              )}
+            </div>
           </Navbar.Collapse>
         </Container>
       </Navbar>
-
       {/* HERO SLIDER */}
       <div
         className={styles.heroSlide}
@@ -928,7 +1058,7 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
                   return (
                     <Card key={event.Id} className={styles.eventCard}>
                       <div
-                        className={styles.eventCard}
+                        // className={styles.eventCard}
                         onClick={() => openEvent(event)}
                         style={{
                           cursor: event.FileUrl ? "pointer" : "default",
@@ -943,7 +1073,7 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
                         />
 
                         <Card.Body className={styles.eventCardBody}>
-                          <Row className="align-items-center">
+                          <Row className="align-items-center  gx-2">
                             <Col xs="auto">
                               <div
                                 className={
@@ -1039,7 +1169,7 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
                   documents.map((doc) => (
                     <Row
                       key={doc.Id}
-                      className={styles.documentRow}
+                      className={` ${styles.documentRow} gx-2`}
                       style={{
                         cursor: doc.FileUrl?.trim() ? "pointer" : "default",
                       }}
@@ -1128,7 +1258,7 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
                 </div>
 
                 {/* SWIPER WRAPPER */}
-                <div className={`${styles.newsSliderWrapper} mt-3`}>
+                <div className={styles.newsSliderWrapper}>
                   {/* LEFT BUTTON */}
                   <button
                     type="button"
@@ -1209,30 +1339,35 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
             <Col xs={12} lg={announcements.length > 0 ? 4 : 12}>
               <div className={styles.discussionBoardSection}>
                 {/* Header */}
-                <div className={styles.newsHeader}>
+                <div className={styles.discussionHeader}>
                   <h2>General Discussion Board</h2>
 
-                  <a
-                    href="#"
-                    className={styles.viewAllLink}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleShowDiscussion();
-                    }}
-                  >
-                    <i className="bi bi-plus-circle me-2"></i>
-                    Add
-                  </a>
-                  <a
-                    href="#"
-                    className={styles.viewAllLink}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setCurrentPage("DiscussionBoard");
-                    }}
-                  >
-                    View All
-                  </a>
+                  <div className={styles.headerActions}>
+                    <a
+                      href="#"
+                      className={styles.viewAllLink}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleShowDiscussion();
+                      }}
+                    >
+                      {/* <i className="bi bi-plus-circle me-1"></i> */}
+                      Add
+                    </a>
+
+                    <span className={styles.divider}>|</span>
+
+                    <a
+                      href="#"
+                      className={styles.viewAllLink}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage("DiscussionBoard");
+                      }}
+                    >
+                      View All
+                    </a>
+                  </div>
                 </div>
 
                 {discussions.slice(0, 3).map((item) => (
@@ -1251,35 +1386,42 @@ const BpclMrDepartmentProps: React.FC<IBpclMrDepartmentProps> = (props) => {
                             {item.Title}
                           </h3>
 
-                          <div className={styles.metadata}>
+                          <div className={styles.createdBy}>
                             Created By :
                             <span className={styles.author}>
                               {item.Author?.Title}
                             </span>
-                            <span className={styles.separator}>•</span>
-                            Reply Count :
-                            <span className={styles.author}>
-                              {item.ReplyCount}
-                            </span>
-                            {/* <span className={styles.separator}>•</span> */}
-                            <span className={styles.date}>
-                              {item.Created
-                                ? new Date(item.Created).toLocaleDateString(
-                                    "en-GB",
-                                  )
-                                : ""}
-                            </span>
-                            <span className={styles.time}>
-                              {item.Created
-                                ? new Date(item.Created).toLocaleTimeString(
-                                    [],
-                                    {
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                    },
-                                  )
-                                : ""}
-                            </span>
+                          </div>
+
+                          <div className={styles.footerRow}>
+                            <div className={styles.dateTime}>
+                              <span>
+                                {item.Created
+                                  ? new Date(item.Created).toLocaleDateString(
+                                      "en-GB",
+                                    )
+                                  : ""}
+                              </span>
+
+                              <span className={styles.separator}>•</span>
+
+                              <span>
+                                {item.Created
+                                  ? new Date(item.Created).toLocaleTimeString(
+                                      [],
+                                      {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      },
+                                    )
+                                  : ""}
+                              </span>
+                            </div>
+
+                            <div className={styles.replyCount}>
+                              {item.ReplyCount}{" "}
+                              {item.ReplyCount === 1 ? "Reply" : "Replies"}
+                            </div>
                           </div>
                         </div>
                       </div>

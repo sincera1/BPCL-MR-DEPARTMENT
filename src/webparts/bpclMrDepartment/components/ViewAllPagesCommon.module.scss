@@ -1,26 +1,43 @@
 // Global Styles
 :global(body) {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
 }
 
 :global {
-  --bs-font-sans-serif: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --bs-font-sans-serif:
+    "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
 }
 
 :global(#workbenchPageContent),
 :global(.CanvasZone),
 :global(.ControlZone),
-:global(.CanvasSection), 
+:global(.CanvasSection),
 :global(.Canvas) {
   max-width: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
   width: 100% !important;
   background: #ffffff !important;
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
 }
 
 h1,
@@ -32,15 +49,21 @@ span,
 button,
 table,
 a {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
 }
 
 .pageContainer {
   background: #f4f7fb;
 }
- 
-
 
 /* Banner */
 
@@ -49,7 +72,7 @@ a {
   align-items: center;
   gap: 18px;
   flex-wrap: wrap;
-  background: linear-gradient(90deg, #012E7B, #0247AA);
+  background: linear-gradient(90deg, #012e7b, #0247aa);
   color: #fff;
   padding: 18px 24px;
   border-radius: 0px 0px 20px 20px;
@@ -58,7 +81,7 @@ a {
 .bannerIcon {
   width: 60px;
   height: 60px;
-  border: 1px solid rgba(255, 255, 255, .35);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 14px;
   display: flex;
   justify-content: center;
@@ -74,18 +97,19 @@ a {
 .banner p {
   margin: 2px 0 0;
   font-size: 14px;
-  opacity: .9;
+  opacity: 0.9;
 }
 
 /* Card */
 .cardContainer {
-  padding: 20px 40px;
+  // padding: 20px 40px;
+  padding: 20px;
 }
 
 .listCard {
   border: none;
   border-radius: 18px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, .08);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
 }
 
 .card {
@@ -111,7 +135,7 @@ a {
 
 .formLabel {
   color: #434975;
-  margin-bottom: .2rem;
+  margin-bottom: 0.2rem;
 }
 // .searchBtn {
 //   width: 100%;
@@ -123,7 +147,6 @@ a {
 //   border-radius: 8px;
 //   font-size: 14px;
 // }
-
 
 // .searchBtn:hover {
 //   background: #01348a !important;
@@ -150,12 +173,10 @@ a {
   border-radius: 8px;
   font-size: 14px;
 }
-  
 
 Form.Control {
   color: #333638;
 }
-
 
 /* Filter */
 
@@ -300,14 +321,13 @@ Form.Control {
 
 /* Responsive */
 
-@media (max-width:992px) {
+@media (max-width: 992px) {
   .cardContainer {
     padding: 20px;
   }
 }
 
-
-@media(max-width:768px) {
+@media (max-width: 768px) {
   .banner {
     flex-direction: column;
     align-items: flex-start;
@@ -338,11 +358,11 @@ Form.Control {
   }
 
   :global(.pagination .page-link) {
-    padding: .35rem .65rem;
+    padding: 0.35rem 0.65rem;
   }
 }
 
-@media (max-width:576px) {
+@media (max-width: 576px) {
   .cardContainer {
     padding: 12px;
   }
@@ -364,9 +384,16 @@ Form.Control {
   text-decoration: none !important;
   color: inherit !important;
 
-  font-family: 'Inter', system-ui, -apple-system,
-    BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
 
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
 
@@ -496,13 +523,13 @@ Form.Control {
   transition: color 0.3s ease;
 }
 
-.cardDate i { 
+.cardDate i {
   color: #0076c0;
   font-size: 0.8rem;
 
   transition: color 0.3s ease;
 }
- 
+
 /* ==========================
    Hover Text
 ========================== */
@@ -671,7 +698,6 @@ Form.Control {
 /* Mobile */
 
 @media (max-width: 576px) {
-
   .eventCard {
     padding: 16px;
   }
@@ -803,7 +829,6 @@ Form.Control {
     font-size: 0.75rem;
   }
 }
-
 
 // backbutton
 .backIcon {
