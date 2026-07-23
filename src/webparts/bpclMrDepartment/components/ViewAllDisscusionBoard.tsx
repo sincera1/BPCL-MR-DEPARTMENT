@@ -70,7 +70,6 @@ const ViewAllDisscusionBoard: React.FC<IViewAllDisscusionBoardProps> = (
     loadDiscussionBoard().catch(console.error);
   }, []);
 
-
   const loadDiscussionBoard = async () => {
     const data = await service.getDiscussionBoard();
     console.log("Discussion Data:", data);
@@ -155,8 +154,6 @@ const ViewAllDisscusionBoard: React.FC<IViewAllDisscusionBoardProps> = (
 
   const currentUserId = props.context.pageContext.legacyPageContext.userId;
 
-  
-
   const totalPages = Math.ceil(discussions.length / pageSize);
 
   const pagedDiscussions = discussions.slice(
@@ -199,7 +196,7 @@ const ViewAllDisscusionBoard: React.FC<IViewAllDisscusionBoardProps> = (
                     }}
                   >
                     <i className="bi bi-plus-circle me-2"></i>
-                    Add
+                    Add New Discussion
                   </a>
                 </div>
 
@@ -219,41 +216,102 @@ const ViewAllDisscusionBoard: React.FC<IViewAllDisscusionBoardProps> = (
                             {item.Title}
                           </h3>
 
-                          <div className={styles.metadata}>
+                          <div className={styles.createdBy}>
                             Created By :
                             <span className={styles.author}>
                               {item.Author?.Title}
                             </span>
-                            <span className={styles.separator}>•</span>
+                          </div>
+                          <div className={styles.footerRow}>
+                            <div className={styles.dateTime}>
+                              {/* <span className={styles.separator}>•</span>
                             Reply Count :
                             <span className={styles.author}>
                               {item.ReplyCount}
-                            </span>
-                            {/* <span className={styles.separator}>•</span> */}
-                            <span className={styles.date}>
-                              {item.Created
-                                ? new Date(item.Created).toLocaleDateString(
-                                    "en-GB",
-                                  )
-                                : ""}
-                            </span>
-                            <span className={styles.time}>
-                              {item.Created
-                                ? new Date(item.Created).toLocaleTimeString(
-                                    [],
-                                    {
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                    },
-                                  )
-                                : ""}
-                            </span>
+                            </span> */}
+                              {/* <span className={styles.separator}>•</span> */}
+                              <span>
+                                {item.Created
+                                  ? new Date(item.Created).toLocaleDateString(
+                                      "en-GB",
+                                    )
+                                  : ""}
+                              </span>
+                              <span className={styles.separator}>•</span>
+                              <span>
+                                {item.Created
+                                  ? new Date(item.Created).toLocaleTimeString(
+                                      [],
+                                      {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      },
+                                    )
+                                  : ""}
+                              </span>
+                            </div>
+                            <div className={styles.replyCount}>
+                              {item.ReplyCount}{" "}
+                              {item.ReplyCount === 1 ? "Reply" : "Replies"}
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 ))}
+                <div className={styles.paginationSection}>
+                  <div className={styles.leftPagination}>
+                    <span className={styles.pageInfo}>
+                      Page {currentPage} of {totalPages}
+                    </span>
+
+                    <Form.Select
+                      value={pageSize}
+                      onChange={(e) => {
+                        setPageSize(Number(e.target.value));
+                        setCurrentPage(1);
+                      }}
+                    >
+                      <option value={10}>10 per page</option>
+
+                      <option value={20}>20 per page</option>
+
+                      <option value={50}>50 per page</option>
+                    </Form.Select>
+                  </div>
+
+                  <Pagination className="mb-0 justify-content-end flex-wrap">
+                    <Pagination.First
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage(1)}
+                    />
+
+                    <Pagination.Prev
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                    />
+
+                    {Array.from({ length: totalPages }, (_, index) => (
+                      <Pagination.Item
+                        key={index}
+                        active={currentPage === index + 1}
+                        onClick={() => setCurrentPage(index + 1)}
+                      >
+                        {index + 1}
+                      </Pagination.Item>
+                    ))}
+                    <Pagination.Next
+                      disabled={currentPage === totalPages}
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                    />
+
+                    <Pagination.Last
+                      disabled={currentPage === totalPages}
+                      onClick={() => setCurrentPage(totalPages)}
+                    />
+                  </Pagination>
+                </div>
               </div>
             </Col>
           </Row>
@@ -271,7 +329,7 @@ const ViewAllDisscusionBoard: React.FC<IViewAllDisscusionBoardProps> = (
           </div>
         )}
 
-{/*  add modal */}
+        {/*  add modal */}
         <Modal
           show={showAddDiscussion}
           onHide={handleCloseDiscussion}
@@ -335,11 +393,10 @@ const ViewAllDisscusionBoard: React.FC<IViewAllDisscusionBoardProps> = (
           </Modal.Footer>
         </Modal>
 
-{/* view modal */}
+        {/* view modal */}
         <Modal
           show={showDiscussionModal}
           onHide={() => {
-           
             setReplyText("");
             setEditingReplyId(null);
             setSelectedDiscussion(null);
@@ -369,13 +426,13 @@ const ViewAllDisscusionBoard: React.FC<IViewAllDisscusionBoardProps> = (
                 height={50}
               /> */}
               <img
-  src={`${props.context.pageContext.web.absoluteUrl}/_layouts/15/userphoto.aspx?size=L&accountname=${selectedDiscussion?.Author?.EMail}`}
-  alt="User"
-  className="rounded-circle"
-  width={50}
-  height={50}
-  style={{ objectFit: "cover" }}
-/>
+                src={`${props.context.pageContext.web.absoluteUrl}/_layouts/15/userphoto.aspx?size=L&accountname=${selectedDiscussion?.Author?.EMail}`}
+                alt="User"
+                className="rounded-circle"
+                width={50}
+                height={50}
+                style={{ objectFit: "cover" }}
+              />
 
               <div className="ms-3 flex-grow-1">
                 <div className="d-flex justify-content-between align-items-center">
@@ -422,11 +479,11 @@ const ViewAllDisscusionBoard: React.FC<IViewAllDisscusionBoardProps> = (
                     alt=""
                   /> */}
                   <img
-  src={`${props.context.pageContext.web.absoluteUrl}/_layouts/15/userphoto.aspx?size=M&accountname=${reply.Author?.EMail}`}
-  className={styles.replyAvatar}
-  alt=""
-  style={{ objectFit: "cover" }}
-/>
+                    src={`${props.context.pageContext.web.absoluteUrl}/_layouts/15/userphoto.aspx?size=M&accountname=${reply.Author?.EMail}`}
+                    className={styles.replyAvatar}
+                    alt=""
+                    style={{ objectFit: "cover" }}
+                  />
 
                   <div className={styles.replyContent}>
                     <div className="d-flex justify-content-between">
@@ -495,7 +552,6 @@ const ViewAllDisscusionBoard: React.FC<IViewAllDisscusionBoardProps> = (
             <Form.Group className="mt-3">
               <Form.Label>Reply</Form.Label>
 
-             
               <Form.Control
                 as="textarea"
                 rows={4}
@@ -531,59 +587,6 @@ const ViewAllDisscusionBoard: React.FC<IViewAllDisscusionBoardProps> = (
             </div>
           </Modal.Body>
         </Modal>
-
-        <div className={styles.paginationSection}>
-          <div className={styles.leftPagination}>
-            <span className={styles.pageInfo}>
-              Page {currentPage} of {totalPages}
-            </span>
-
-            <Form.Select
-              value={pageSize}
-              onChange={(e) => {
-                setPageSize(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-            >
-              <option value={10}>10 per page</option>
-
-              <option value={20}>20 per page</option>
-
-              <option value={50}>50 per page</option>
-            </Form.Select>
-          </div>
-
-          <Pagination className="mb-0 justify-content-end flex-wrap">
-            <Pagination.First
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(1)}
-            />
-
-            <Pagination.Prev
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(currentPage - 1)}
-            />
-
-            {Array.from({ length: totalPages }, (_, index) => (
-              <Pagination.Item
-                key={index}
-                active={currentPage === index + 1}
-                onClick={() => setCurrentPage(index + 1)}
-              >
-                {index + 1}
-              </Pagination.Item>
-            ))}
-            <Pagination.Next
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(currentPage + 1)}
-            />
-
-            <Pagination.Last
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(totalPages)}
-            />
-          </Pagination>
-        </div>
       </div>
     </div>
   );
